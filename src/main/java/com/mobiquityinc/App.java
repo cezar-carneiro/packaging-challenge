@@ -1,10 +1,14 @@
 package com.mobiquityinc;
 
-import com.mobiquityinc.exception.APIException;
 import com.mobiquityinc.packer.Packer;
 
 public class App {
-    public static void main( String[] args ) throws APIException {
-        Packer.pack(args[1]);
+	
+    public static void main( String[] args ) {
+        Packer.pack(args[0]);
+        
+//    	for(String arg: args)
+//    		System.out.println(arg	);
+
     }
 }

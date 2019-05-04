@@ -6,10 +6,6 @@ public class Thing {
 	private Double weight; 
 	private Double cost;
 	
-	public Thing() {
-		
-	}
-
 	public Thing(Integer index, Double weight, Double cost) {
 		this.index = index;
 		this.weight = weight;
