@@ -1,6 +1,7 @@
 package com.mobiquityinc.packer.file;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
@@ -20,32 +21,25 @@ public class FileParser {
 	static private Pattern linePattern = Pattern.compile("^(?<packageWeight>\\d+) :(?<things>( \\((.*?)\\))*)");
 	static private Pattern thingPattern = Pattern.compile("^\\((?<index>\\d+),(?<weight>\\d+(\\.\\d+)*?),\\D(?<cost>\\d+(\\.\\d+)*?)\\)");
 	
-	private String absolutePath;
-	
-	public FileParser(String absolutePath) {
-		this.absolutePath = absolutePath;
-	}
-
-	public void parse(Consumer<TestCase> onTestCaseParsed) {
+	public void parse(String absolutePath, Consumer<TestCase> onTestCaseParsed) {
 		try (Stream<String> stream = Files.lines(Paths.get(absolutePath))) {
 	        stream.forEach(line -> {
                 Matcher lineMatcher = linePattern.matcher(line);
 
                 if (lineMatcher.matches()) {
                     String packageWeightStr = lineMatcher.group("packageWeight");
-                    Integer packageWeight = Integer.parseInt(packageWeightStr);
-                    if (packageWeight > Constraints.MAX_PACKAGE_WEIGHT) {
-                		throw new APIException(String.format("Package weight (%s) above maximum allowed package weight (%s)", 
-                				packageWeight, Constraints.MAX_PACKAGE_WEIGHT));
-                	}
+                    BigDecimal packageWeight = new BigDecimal(packageWeightStr);
+                    
+                    Constraints.check(packageWeight.doubleValue(), Constraints.MAX_PACKAGE_WEIGHT, 
+                    		String.format("Package weight (%s) above maximum allowed package weight (%s)", 
+                    				packageWeight, Constraints.MAX_PACKAGE_WEIGHT));
                     
                     String thingsStr = lineMatcher.group("things").trim();
                     List<Thing> list = parseThings(thingsStr);
                     
-                    if(list.size() > Constraints.MAX_THINGS) {
-                    	throw new APIException(String.format("Number of things (%s) above maximum allowed number of thingst (%s)", 
-                    			list.size(), Constraints.MAX_THINGS));
-                    }
+                    Constraints.check(list.size(), Constraints.MAX_THINGS, 
+                    		String.format("Number of things (%s) above maximum allowed number of thingst (%s)", 
+                        			list.size(), Constraints.MAX_THINGS));
                     
                     TestCase testCase = new TestCase(packageWeight, list);
                     onTestCaseParsed.accept(testCase);
@@ -70,15 +64,16 @@ public class FileParser {
             String costStr = matcher.group("cost");
             
         	Integer index = Integer.parseInt(indexStr);
-        	Double weight = Double.parseDouble(weightStr);
-        	if (weight > Constraints.MAX_THING_WEIGHT) {
-        		throw new APIException(String.format("Weight (%s) above maximum weight (%s)", weight, Constraints.MAX_THING_WEIGHT));
-        	}
+        	BigDecimal weight = new BigDecimal(weightStr);
         	
-        	Double cost = Double.parseDouble(costStr);
-        	if (cost > Constraints.MAX_THING_COST) {
-        		throw new APIException(String.format("Cost (%s) above maximum cost (%s)", cost, Constraints.MAX_THING_COST));
-        	}
+        	Constraints.check(weight.doubleValue(), Constraints.MAX_THING_WEIGHT, 
+        			String.format("Weight (%s) above maximum weight (%s)", 
+            				weight, Constraints.MAX_THING_WEIGHT));
+        	
+        	BigDecimal cost = new BigDecimal(costStr);
+        	Constraints.check(cost.doubleValue(), Constraints.MAX_THING_COST, 
+        			String.format("Cost (%s) above maximum cost (%s)", 
+            				cost, Constraints.MAX_THING_COST));
         	
         	return new Thing(index, weight, cost);
         }

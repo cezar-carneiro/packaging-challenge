@@ -1,22 +1,23 @@
 package com.mobiquityinc.packer.model;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public class TestCase {
 	
-	private Integer packageWeight;
+	private BigDecimal packageWeight;
 	private List<Thing> things;
 	
-	public TestCase(Integer packageWeight, List<Thing> things) {
+	public TestCase(BigDecimal packageWeight, List<Thing> things) {
 		this.packageWeight = packageWeight;
 		this.things = things;
 	}
 
-	public Integer getPackageWeight() {
+	public BigDecimal getPackageWeight() {
 		return packageWeight;
 	}
 
-	public void setPackageWeight(Integer packageWeight) {
+	public void setPackageWeight(BigDecimal packageWeight) {
 		this.packageWeight = packageWeight;
 	}
 
