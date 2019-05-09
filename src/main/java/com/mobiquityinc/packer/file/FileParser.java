@@ -21,6 +21,11 @@ public class FileParser {
 	static private Pattern linePattern = Pattern.compile("^(?<packageWeight>\\d+) :(?<things>( \\((.*?)\\))*)");
 	static private Pattern thingPattern = Pattern.compile("^\\((?<index>\\d+),(?<weight>\\d+(\\.\\d+)*?),\\D(?<cost>\\d+(\\.\\d+)*?)\\)");
 	
+	/**
+	 * 
+	 * @param absolutePath
+	 * @param onTestCaseParsed
+	 */
 	public void parse(String absolutePath, Consumer<TestCase> onTestCaseParsed) {
 		try (Stream<String> stream = Files.lines(Paths.get(absolutePath))) {
 	        stream.forEach(line -> {
@@ -30,7 +35,7 @@ public class FileParser {
                     String packageWeightStr = lineMatcher.group("packageWeight");
                     BigDecimal packageWeight = new BigDecimal(packageWeightStr);
                     
-                    Constraints.check(packageWeight.doubleValue(), Constraints.MAX_PACKAGE_WEIGHT, 
+                    Constraints.check(packageWeight, Constraints.MAX_PACKAGE_WEIGHT, 
                     		String.format("Package weight (%s) above maximum allowed package weight (%s)", 
                     				packageWeight, Constraints.MAX_PACKAGE_WEIGHT));
                     
@@ -66,12 +71,12 @@ public class FileParser {
         	Integer index = Integer.parseInt(indexStr);
         	BigDecimal weight = new BigDecimal(weightStr);
         	
-        	Constraints.check(weight.doubleValue(), Constraints.MAX_THING_WEIGHT, 
+        	Constraints.check(weight, Constraints.MAX_THING_WEIGHT, 
         			String.format("Weight (%s) above maximum weight (%s)", 
             				weight, Constraints.MAX_THING_WEIGHT));
         	
         	BigDecimal cost = new BigDecimal(costStr);
-        	Constraints.check(cost.doubleValue(), Constraints.MAX_THING_COST, 
+        	Constraints.check(cost, Constraints.MAX_THING_COST, 
         			String.format("Cost (%s) above maximum cost (%s)", 
             				cost, Constraints.MAX_THING_COST));
         	

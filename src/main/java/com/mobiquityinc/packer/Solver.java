@@ -1,6 +1,8 @@
 package com.mobiquityinc.packer;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import com.mobiquityinc.packer.model.TestCase;
@@ -8,6 +10,8 @@ import com.mobiquityinc.packer.model.Thing;
 import com.mobiquityinc.util.Numbers;
 
 /**
+ * https://www.youtube.com/watch?v=F-dudDe4ugs
+ * https://en.wikipedia.org/wiki/Knapsack_problem#0/1_knapsack_problem
  * 
  * @author cezar.carneiro
  *
@@ -15,8 +19,21 @@ import com.mobiquityinc.util.Numbers;
 public class Solver {
 	
 	public List<Thing> solve(TestCase testCase) {
-		Integer capacity = Numbers.moveFloatingPoint(testCase.getPackageWeight());
+		if (testCase == null) {
+			throw new IllegalArgumentException();
+		}
+		
+		if(testCase.getPackageWeight() == null || testCase.getPackageWeight().compareTo(BigDecimal.ZERO) == 0) {
+			return Collections.emptyList();
+		}
+		
+		if(testCase.getThings() == null || testCase.getThings().size() == 0) {
+			return Collections.emptyList();
+		}
+		
 		List<Thing> things = testCase.getThings();
+		sortByWeight(things);
+		Integer capacity = Numbers.moveFloatingPoint(testCase.getPackageWeight());
 		
 		int[][] matrix = initializeMatrix(capacity, things.size());
 
@@ -24,7 +41,7 @@ public class Solver {
 
 		return pickResult(capacity, things, matrix);
 	}
-
+	
 	/**
 	 * @param capacity Max weight in the package
 	 * @param size Number of things to be evaluated
@@ -85,7 +102,17 @@ public class Solver {
 			}
 		}
 
+		sortByIndex(itemsSolution);
+		
 		return itemsSolution;
+	}
+	
+	private void sortByWeight(List<Thing> things) {
+		Collections.sort(things, (Thing o1, Thing o2) -> o1.getWeight().compareTo(o2.getWeight()));
+	}
+
+	private void sortByIndex(List<Thing> things) {
+		Collections.sort(things, (Thing o1, Thing o2) -> o1.getIndex() - o2.getIndex());
 	}
 
 }

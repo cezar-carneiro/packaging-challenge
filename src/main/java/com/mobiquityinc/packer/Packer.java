@@ -13,12 +13,13 @@ public class Packer {
 		Solver solver = new Solver();
 		SolutionWriter writer = new SolutionWriter();
 		
-		fp.parse(filePath, (TestCase testCase) -> {
-//			System.out.println(testCase);
+		fp.parse(filePath, (TestCase testCase) -> { 
+			// This callback is executed for every line of the file that is parsed into a 'TestCase'
+			
 			List<Thing> solution = solver.solve(testCase);
-			writer.write(solution);
+			writer.write(solution); // accumulate the solution for the current test case as text 
 		});
 		
-		return writer.toString();
+		return writer.toString(); // return the solution for every test case in the file
 	}
 }

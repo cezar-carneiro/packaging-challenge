@@ -5,7 +5,14 @@ import java.util.List;
 import com.mobiquityinc.packer.model.Thing;
 
 /**
- * Class that can accumulate the result as text
+ * Class that can accumulate the result of multiple test cases formatted as text.
+ * One test case per line.<br/>
+ * Ex.:<br/>
+ * 4<br/>
+ * -<br/>
+ * 2,7<br/>
+ * 8,9<br/>
+ * 
  * @author cezar.carneiro
  *
  */
@@ -14,12 +21,14 @@ public class SolutionWriter {
 	private StringBuilder stringBuilder = new StringBuilder();
 	
 	/**
-	 * 
-	 * @param things List of things to format as text
+	 * @param things Solution for a test case (list of items that could be picked)
 	 */
 	public void write(List<Thing> things) {
-		if(things == null || things.size() == 0) {
-			stringBuilder.append("-\n");// write dash
+		if(things == null) {
+			throw new IllegalArgumentException();
+		}
+		if(things.size() == 0) {
+			stringBuilder.append("-\n");// write a dash if no items could be picked
 			return;
 		}
 		
