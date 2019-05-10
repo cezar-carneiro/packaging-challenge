@@ -43,8 +43,14 @@ public class Solver {
 		}
 		
 		List<Thing> things = testCase.getThings();
+		
+		/* Making the lighter items go first so we can prioritize a lighter item 
+		 * over a heavier item in case they have the same weight*/
 		sortByWeight(things);
-		Integer capacity = Numbers.moveFloatingPoint(testCase.getPackageWeight());
+		
+		/* Moving floating point so we'll have integers instead of doubles
+		 * (Indexes in array can only be integers)*/
+		Integer capacity = Numbers.moveFloatingPoint(testCase.getPackageWeight()); 
 		
 		int[][] matrix = initializeMatrix(capacity, things.size());
 
@@ -54,6 +60,12 @@ public class Solver {
 	}
 	
 	/**
+	 * A row number i represents the set of all the items from row 1 to row i
+	 * A column number j represents the weight capacity of our package.
+	 * 
+	 * At row 0, when we have no items to pick from, 
+	 * the maximum value that can be stored in any knapsack must be 0. 
+	 * 
 	 * @param capacity Max weight in the package
 	 * @param size Number of things to be evaluated
 	 * @return initialized Matrix
@@ -70,7 +82,8 @@ public class Solver {
 	}
 	
 	/**
-	 * 
+	 * An entry in row i, column j represents the maximum value that can be obtained 
+	 * with items 1, 2, 3 … i, in a package that can hold j weight units.
 	 * 
 	 * @param capacity Max weight in the package
 	 * @param things List of things being evaluated
@@ -127,5 +140,4 @@ public class Solver {
 	private void sortByIndex(List<Thing> things) {
 		Collections.sort(things, (Thing o1, Thing o2) -> o1.getIndex() - o2.getIndex());
 	}
-
 }
