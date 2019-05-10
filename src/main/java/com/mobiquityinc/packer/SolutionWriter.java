@@ -14,7 +14,6 @@ import com.mobiquityinc.packer.model.Thing;
  * 8,9<br/>
  * 
  * @author cezar.carneiro
- *
  */
 public class SolutionWriter {
 	
@@ -44,5 +43,4 @@ public class SolutionWriter {
 	public String toString() {
 		return stringBuilder.toString();
 	}
-
 }

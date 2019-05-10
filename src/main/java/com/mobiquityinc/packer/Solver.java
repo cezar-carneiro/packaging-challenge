@@ -10,14 +10,25 @@ import com.mobiquityinc.packer.model.Thing;
 import com.mobiquityinc.util.Numbers;
 
 /**
- * https://www.youtube.com/watch?v=F-dudDe4ugs
+ * Can solve the Knapsack problem. Given a set of items, each with a weight and a value, 
+ * we must determine the number of each item to include in a collection so that the total weight 
+ * is less than or equal to a given limit and the total value must be maximized.
+ * 
+ * The approach used is based on dynamic programming, as described in:
+ * 
  * https://en.wikipedia.org/wiki/Knapsack_problem#0/1_knapsack_problem
+ * https://www.youtube.com/watch?v=F-dudDe4ugs
  * 
  * @author cezar.carneiro
- *
  */
 public class Solver {
 	
+	/**
+	 * Analyzes the items from the test case and decides which items should go in the package.
+	 * 
+	 * @param testCase 
+	 * @return List of the things that can be put in the package
+	 */
 	public List<Thing> solve(TestCase testCase) {
 		if (testCase == null) {
 			throw new IllegalArgumentException();
@@ -59,14 +70,16 @@ public class Solver {
 	}
 	
 	/**
+	 * 
+	 * 
 	 * @param capacity Max weight in the package
 	 * @param things List of things being evaluated
 	 * @param matrix Populated Matrix
 	 */
 	private void populateMatrix(Integer capacity, List<Thing> things, int[][] matrix) {
-		// we iterate on items
+		// iterate on the items
 		for (int i = 1; i <= things.size(); i++) {
-			// we iterate on each capacity
+			// iterate on each capacity
 			for (int j = 0; j <= capacity; j++) {
 				int weight = Numbers.moveFloatingPoint(things.get(i - 1).getWeight());
 				int cost = Numbers.moveFloatingPoint(things.get(i - 1).getCost());
@@ -74,7 +87,6 @@ public class Solver {
 				if (weight > j) {
 					matrix[i][j] = matrix[i - 1][j];
 				} else {
-					// we maximize value at this rank in the matrix
 					matrix[i][j] = Math.max(matrix[i-1][j], matrix[i-1][j - weight] + cost);
 				}
 			}
@@ -82,6 +94,7 @@ public class Solver {
 	}
 
 	/**
+	 * Iterate back on the Matrix discovering which items can go in the package. 
 	 * 
 	 * @param capacity Max weight in the package
 	 * @param things List of things being evaluated
@@ -96,7 +109,7 @@ public class Solver {
 		for (int i = things.size(); i > 0 && res > 0; i--) {
 			if (res != matrix[i - 1][w]) {
 				itemsSolution.add(things.get(i - 1));
-				// we remove items value and weight
+				// removing items value and weight
 				res -= Numbers.moveFloatingPoint(things.get(i - 1).getCost());
 				w -= Numbers.moveFloatingPoint(things.get(i - 1).getWeight());
 			}
